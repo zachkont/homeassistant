@@ -1,0 +1,7 @@
+person.zach:
+  entity_picture: "/local/images/happyharris.png"
+person.liana:
+  entity_picture: "/local/images/angryliana.png"
+
+zone.home:
+    radius: 20

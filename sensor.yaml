@@ -1,0 +1,111 @@
+# CPU Temp
+  - platform: command_line
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    # If errors occur, make sure configuration file is encoded as UTF-8
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) | round(1) }}'
+
+# System monitor
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /root
+      - type: memory_use_percent
+      - type: load_5m
+
+# Consumption plugs
+  - platform: template
+    sensors:
+      consumption_plug_amps:
+        friendly_name_template: "{{ states.switch.consumption_plug.name}} Current"
+        value_template: '{{ states.switch.consumption_plug.attributes["current_a"] | float }}'
+        unit_of_measurement: 'A'
+      consumption_plug_watts:
+        friendly_name_template: "{{ states.switch.consumption_plug.name}} Current Consumption"
+        value_template: '{{ states.switch.consumption_plug.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      consumption_plug_total_kwh:
+        friendly_name_template: "{{ states.switch.consumption_plug.name}} Total Consumption"
+        value_template: '{{ states.switch.consumption_plug.attributes["total_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      consumption_plug_volts:
+        friendly_name_template: "{{ states.switch.consumption_plug.name}} Voltage"
+        value_template: '{{ states.switch.consumption_plug.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+      consumption_plug_today_kwh:
+        friendly_name_template: "{{ states.switch.consumption_plug.name}} Today's Consumption"
+        value_template: '{{ states.switch.consumption_plug.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+
+# Dehydrator
+  - platform: template
+    sensors:
+      pump_on:
+        friendly_name: "Pump on"
+        value_template: >-
+          {{ states('sensor.consumption_plug_watts')|float > 150 }}
+      fan_on:
+        friendly_name: "Fan on"
+        value_template: >-
+          {{ (states('sensor.consumption_plug_watts')|float > 20) and (states('sensor.consumption_plug_watts')|float < 150) }}
+      tank_full:
+        friendly_name: "Tank full"
+        value_template: >-
+          {{ (states('sensor.consumption_plug_watts')|float > 0.5) and (states('sensor.consumption_plug_watts')|float < 20) }}
+      dehydraytor_off:
+        friendly_name: "Dehydrator off"
+        value_template: >-
+          {{ states('sensor.consumption_plug_watts')|float < 0.5 }}
+      dehydrator:
+        value_template: >-
+          {% if states('sensor.consumption_plug_watts')|float > 150 %}
+            pump_on
+          {% elif (states('sensor.consumption_plug_watts')|float > 20) and (states('sensor.consumption_plug_watts')|float < 150) %}
+            fan_on
+          {% elif (states('sensor.consumption_plug_watts')|float > 0.5) and (states('sensor.consumption_plug_watts')|float < 20) %}
+            tank_full
+          {% elif states('sensor.consumption_plug_watts')|float < 0.5 %}
+            off
+          {% else %}
+            unknown
+          {% endif %}
+
+# Outside temperature
+  - platform: template
+    sensors:
+      temperature_outside:
+        friendly_name: "Outside Temperature"
+        unit_of_measurement: '°C'
+        value_template: "{{ state_attr('weather.home', 'temperature') }}"
+
+# House averages
+  - platform: min_max
+    name: "House Temperature"
+    type: mean
+    entity_ids:
+      - sensor.temperature_3
+      - sensor.temperature_7
+      - sensor.temperature_10
+      - sensor.temperature_13
+
+  - platform: min_max
+    name: "House Humidity"
+    type: mean
+    entity_ids:
+      - sensor.humidity_4
+      - sensor.humidity_8
+      - sensor.humidity_11
+      - sensor.humidity_14
+
+# Steam
+  - platform: steam_online
+    api_key: !secret steam_api_key
+    accounts:
+      - 76561198020193902
+      - 76561198045427020
+      - 76561198033455829
+      - 76561198045457684
+      - 76561198048222743
+      - 76561198149327722
+      - 76561197982900093

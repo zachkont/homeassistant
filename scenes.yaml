@@ -1,0 +1,161 @@
+- id: '1594072275949'
+  name: Sleeping
+  entities:
+    climate.living_room_ac:
+      hvac_modes:
+      - 'off'
+      - heat
+      - cool
+      min_temp: 16
+      max_temp: 30
+      target_temp_step: 1
+      fan_modes:
+      - auto
+      - mid
+      - high
+      - low
+      current_temperature: 18.6
+      temperature: 26
+      current_humidity: 60.1
+      fan_mode: high
+      last_on_operation: heat
+      device_code: 1020
+      manufacturer: Panasonic
+      supported_models:
+      - CS-CE7HKEW
+      - CS-CE9HKEW
+      - CS-CE12HKEW
+      - CS-PC24MKF
+      - CS-C24PKF
+      supported_controller: Broadlink
+      commands_encoding: Base64
+      friendly_name: Living Room AC
+      supported_features: 9
+      state: 'off'
+    light.floor_lamp:
+      min_mireds: 153
+      max_mireds: 588
+      effect_list:
+      - Strobe color
+      - Police
+      - Christmas
+      - RGB
+      - Random Loop
+      - Fast Random Loop
+      - LSD
+      - Slowdown
+      - Disco
+      - Strobe epilepsy!
+      - Alarm
+      - Police2
+      - WhatsApp
+      - Facebook
+      - Twitter
+      - Slow Temp
+      - Stop
+      flowing: false
+      friendly_name: Floor Lamp
+      supported_features: 63
+      state: 'off'
+    switch.06003002cc50e37f5432_1:
+      friendly_name: Sink light
+      state: 'off'
+    switch.06003002cc50e37f5432_2:
+      friendly_name: Oven light
+      state: 'off'
+    switch.bf0c3986535c3a94f4q0qr:
+      friendly_name: Desk light
+      state: 'off'
+    switch.couch_ceiling:
+      friendly_name: Couch ceiling
+      state: 'off'
+    switch.table_ceiling:
+      friendly_name: Table ceiling
+      state: 'off'
+    switch.sonoff_1000b0edec:
+      manufacturer: SONOFF
+      model: S26
+      sw_version: PSA-B01-GL v3.3.0
+      cloud: online
+      rssi: -84
+      local: online
+      friendly_name: Heater socket
+      supported_features: 0
+      state: 'off'
+  icon: mdi:bed
+- id: '1600533928467'
+  name: Movie time
+  entities:
+    switch.table_ceiling:
+      friendly_name: Table ceiling
+      state: 'off'
+    light.floor_lamp:
+      min_mireds: 153
+      max_mireds: 588
+      effect_list:
+      - Strobe color
+      - Police
+      - Christmas
+      - RGB
+      - Random Loop
+      - Fast Random Loop
+      - LSD
+      - Slowdown
+      - Disco
+      - Strobe epilepsy!
+      - Alarm
+      - Police2
+      - WhatsApp
+      - Facebook
+      - Twitter
+      - Slow Temp
+      - Stop
+      flowing: false
+      friendly_name: Floor lamp
+      supported_features: 63
+      state: 'off'
+  icon: mdi:movie:open
+- id: '1600534294873'
+  name: Chilling
+  entities:
+    switch.couch_ceiling:
+      friendly_name: Couch ceiling
+      state: 'on'
+    light.floor_lamp:
+      min_mireds: 153
+      max_mireds: 588
+      effect_list:
+      - Strobe color
+      - Police
+      - Christmas
+      - RGB
+      - Random Loop
+      - Fast Random Loop
+      - LSD
+      - Slowdown
+      - Disco
+      - Strobe epilepsy!
+      - Alarm
+      - Police2
+      - WhatsApp
+      - Facebook
+      - Twitter
+      - Slow Temp
+      - Stop
+      brightness: 235
+      color_temp: 364
+      hs_color:
+      - 28.171
+      - 64.314
+      rgb_color:
+      - 255
+      - 168
+      - 90
+      xy_color:
+      - 0.522
+      - 0.387
+      flowing: false
+      friendly_name: Floor lamp
+      supported_features: 63
+      state: 'on'
+  icon: mdi:sofa

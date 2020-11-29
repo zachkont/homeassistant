@@ -1,0 +1,7 @@
+start_timer_helper:
+  alias: Prepare shower
+  sequence:
+  - service: timer.start
+    data: {}
+    entity_id: timer.warm_shower
+  mode: single

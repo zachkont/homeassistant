@@ -1,0 +1,122 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+#Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: "http://kontoulospitoassistant.duckdns.org:8123"
+
+homeassistant:
+  customize: !include customize.yaml
+
+sonoff:
+  username: !secret sonoff_username
+  password: !secret sonoff_password
+
+mqtt:
+  discovery: true
+  discovery_prefix: homeassistant
+
+speedtestdotnet:
+
+smartir:
+
+climate:
+  - platform: smartir
+    name: Living Room AC
+    unique_id: livingroom_ac
+    device_code: 1020
+    controller_data: remote.rm_mini3_remote
+    temperature_sensor: sensor.temperature_3
+    humidity_sensor: sensor.humidity_4
+
+media_player:
+  - platform: smartir
+    name: TV
+    unique_id: living_room_tv
+    device_code: 1060
+    controller_data: remote.rm_mini3_remote
+
+spotify:
+  client_id: !secret spotify_client_id
+  client_secret: !secret spotify_client_secret
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+pi_hole:
+  - host: 192.168.1.200
+
+google_assistant:
+  project_id: homeassistant-290716
+  service_account: !include SERVICE_ACCOUNT.JSON
+  report_state: true
+  exposed_domains:
+    - switch
+    - light
+    - climate
+  entity_config:
+    switch.sonoff_1000b0edec:
+      name: Heater
+    switch.consumption_plug:
+      name: Dehydrator
+    light.switches:
+      expose: false
+    light.configuration_tool_2:
+      expose: false
+    switch.bf0c3986535c3a94f4q0qr:
+      expose: false
+    switch.06003002cc50e37f5432_1:
+      expose: false
+    switch.06003002cc50e37f5432_2:
+      expose: false
+    switch.couch_ceiling:
+      expose: false
+    switch.table_ceiling:
+      expose: false
+    switch.kitchen_ceiling:
+      expose: false
+
+light:
+  - platform: switch
+    name: Couch Light
+    entity_id: switch.couch_ceiling
+  - platform: switch
+    name: Table Light
+    entity_id: switch.table_ceiling
+  - platform: switch
+    name: Sink Light
+    entity_id: switch.06003002cc50e37f5432_1
+  - platform: switch
+    name: Counter Light
+    entity_id: switch.06003002cc50e37f5432_2
+  - platform: switch
+    name: Kitchen Light
+    entity_id: switch.kitchen_ceiling
+  - platform: switch
+    name: Desk Light
+    entity_id: switch.bf0c3986535c3a94f4q0qr
+
+binary_sensor:
+  - platform: workday
+    country: GR
+  - platform: template
+    sensors:
+      someone_is_home:
+        friendly_name: "Anyone is home"
+        value_template: >-
+            {{ is_state('person.zach', 'home') or  is_state('person.liana', 'home') }}
+
+feedreader:
+  urls:
+    - http://showrss.info/user/17120.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensor.yaml
+
+frontend:
+  themes: !include themes.yaml

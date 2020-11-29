@@ -1,0 +1,315 @@
+- alias: Desk sunset
+  description: ''
+  trigger:
+  - event: sunset
+    platform: sun
+  action:
+  - service: switch.turn_on
+    entity_id: switch.bf0c3986535c3a94f4q0qr
+  id: 3f5c63df768d453f93a44bf91334dcf9
+- alias: Desk midnight
+  description: ''
+  trigger:
+  - at: '1:00'
+    platform: time
+  action:
+  - service: switch.turn_off
+    entity_id: switch.bf0c3986535c3a94f4q0qr
+  id: c62c2e1051264c139a59305575d6d7af
+- alias: Turn on boiler with timer
+  trigger:
+  - platform: event
+    event_type: timer.started
+    event_data:
+      entity_id: timer.warm_shower
+  - platform: event
+    event_type: timer.started
+    event_data:
+      entity_id: timer.hot_shower
+  action:
+  - service: switch.turn_on
+    entity_id: switch.sonoff_100097479e
+  id: b2e4803a968c42e3a7a3ca74d798aa20
+- id: 67de18777817410b81366214675d03d8
+  alias: Turn off boiler with timer
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.warm_shower
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.hot_shower
+  action:
+  - service: switch.turn_off
+    entity_id: switch.sonoff_100097479e
+  - service: notify.mobile_app_lianas_iphone
+    data:
+      title: Θερμοσίφωνας
+      message: Έτοιμος! {{ now().strftime("%H:%M") }}'
+  - service: notify.mobile_app_pixel_5
+    data:
+      title: Θερμοσίφωνας
+      message: Έτοιμος! {{ now().strftime("%H:%M") }}'
+  mode: single
+- alias: Reset timer when switched off
+  trigger:
+  - platform: state
+    to: 'off'
+    entity_id: switch.sonoff_100097479e
+  action:
+  - service: timer.cancel
+    entity_id: timer.warm_shower
+  - service: timer.cancel
+    entity_id: timer.hot_shower
+  id: 268e40be776e452c82b93e387cb525e9
+- id: 0984127e89404414b1954e4d0235f6b4
+  alias: Too hot
+  trigger:
+  - platform: numeric_state
+    above: '29'
+    entity_id: sensor.temperature_3
+  action:
+  - service: notify.mobile_app_lianas_iphone
+    data:
+      title: Κάνει ζέστα ({{ states('sensor.temperature_3') }}°C)
+      message: θα άναβα το αρκοντίσιο άμα με άφηνες
+  - service: notify.mobile_app_oneplus_a5010
+    data:
+      title: Κάνει ζέστα ({{ states('sensor.temperature_3') }}°C)
+      message: θα άναβα το αρκοντίσιο άμα με άφηνες
+      actions:
+      - action: ac_cold
+        title: AC ON
+  mode: single
+- id: 15524811d73042b8821526646d746e83
+  alias: Harris is back!
+  trigger:
+  - platform: state
+    to: home
+    entity_id: person.zach
+    for: 00:10
+  action:
+  - service: notify.mobile_app_pixel_5
+    data:
+      title: Γύρισε ο Χάρης!
+      message: τον κατάλαβα στις {{ now().strftime("%H:%M:%S") }}
+  - service: notify.mobile_app_lianas_iphone
+    data:
+      title: Γύρισε ο Χάρης!
+      message: τον κατάλαβα στις {{ now().strftime("%H:%M:%S") }}
+  mode: single
+- alias: Left instant press
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: transmitter_2_gang
+      event: 1002
+  action:
+  - service: switch.toggle
+    entity_id: switch.couch_ceiling
+  id: 03c6ce60bc81466d96c1809247233588
+- alias: Right instant press
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: transmitter_2_gang
+      event: 2002
+  action:
+  - service: switch.toggle
+    entity_id: switch.table_ceiling
+  id: d4eac34e76084777bf8534618e5636a3
+- alias: Both instant press
+  trigger:
+  - platform: event
+    event_type: deconz_event
+    event_data:
+      id: transmitter_2_gang
+      event: 3002
+  action:
+  - service: light.toggle
+    entity_id: light.floor_lamp
+  id: 8a1e5395a3034d129756c6f3d6384c55
+- id: 8d302b97abb543b1a22ebd14e726e4ec
+  alias: Turn on the AC (hot)
+  trigger:
+  - platform: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: ac_hot
+  action:
+  - service: climate.turn_on
+    entity_id: climate.living_room_ac
+    data: {}
+  - service: climate.set_hvac_mode
+    data:
+      entity_id: climate.living_room_ac
+      hvac_mode: heat
+    entity_id: climate.living_room_ac
+  - service: climate.set_temperature
+    data:
+      entity_id: climate.living_room_ac
+      temperature: 23
+    entity_id: climate.living_room_ac
+  mode: single
+- id: '1602190832724'
+  alias: Morning hot water
+  description: ''
+  trigger:
+  - platform: time
+    at: '7:45'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.someone_is_home
+    state: 'on'
+  action:
+  - service: switch.turn_on
+    data: {}
+    entity_id: switch.sonoff_100097479e
+  - delay: 0:15
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.sonoff_100097479e
+  mode: single
+- id: '1602332451559'
+  alias: Leave Home tag
+  description: ''
+  trigger:
+  - platform: tag
+    tag_id: 2e49d5a4-a0e0-42b9-955d-497cf6e20317
+  condition: []
+  action:
+  - scene: scene.sleeping
+  mode: single
+- id: '1605443714558'
+  alias: Dehydrator full
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.dehydrator
+    from: pump_on
+    to: tank_full
+    for: 00:05
+  - platform: state
+    entity_id: sensor.dehydrator
+    from: fan_on
+    to: tank_full
+    for: 00:05
+  condition: []
+  action:
+  - service: notify.mobile_app_pixel_5
+    data:
+      title: Αφυγραντήρας
+      message: Άδειασέ με πλιζ {{ now().strftime("%H:%M:%S") }}
+  - service: notify.mobile_app_lianas_iphone
+    data:
+      title: Αφυγραντήρας
+      message: Άδειασέ με πλιζ {{ now().strftime("%H:%M:%S") }}
+  mode: single
+- id: '1605481093761'
+  alias: Morning heater
+  description: ''
+  trigger:
+  - platform: time
+    at: '7:00'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.someone_is_home
+    state: 'on'
+  action:
+  - service: switch.turn_on
+    data: {}
+    entity_id: switch.sonoff_1000b0edec
+  - delay: 01:10
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.sonoff_1000b0edec
+  mode: single
+- id: '1606068179133'
+  alias: Heater safety off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: switch.sonoff_1000b0edec
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - delay: 02:00
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.sonoff_1000b0edec
+  mode: single
+- id: '1606068738098'
+  alias: Liana is back!
+  description: ''
+  trigger:
+  - platform: state
+    to: home
+    entity_id: person.liana
+  condition: []
+  action:
+  - service: notify.mobile_app_pixel_5
+    data:
+      title: Γύρισε η Λιάνα!
+      message: την κατάλαβα στις {{ now().strftime("%H:%M:%S") }}
+  - service: notify.mobile_app_lianas_iphone
+    data:
+      title: Γύρισες!
+      message: Σε κατάλαβα στις {{ now().strftime("%H:%M:%S") }}
+  mode: single
+- id: '1606068961130'
+  alias: Too cold
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.temperature_3
+    below: '18'
+  condition:
+  - condition: time
+    after: 08:00
+    before: 00:00
+  action:
+  - service: notify.mobile_app_lianas_iphone
+    data:
+      title: Κάνει γκρύο ({{ states('sensor.temperature_3') }}°C)
+      message: θα άναβα το αρκοντίσιο άμα με άφηνες
+  - service: notify.mobile_app_oneplus_a5010
+    data:
+      title: Κάνει γκρύο ({{ states('sensor.temperature_3') }}°C)
+      message: θα άναβα το αρκοντίσιο άμα με άφηνες
+      actions:
+      - action: ac_hot
+        title: AC ON
+  mode: single
+- id: '1606292489305'
+  alias: Warm nights
+  description: ''
+  trigger:
+  - platform: time
+    at: '23:30'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.someone_is_home
+    state: 'on'
+  action:
+  - service: switch.turn_on
+    data: {}
+    entity_id: switch.smart_plug_8
+  - service: switch.turn_on
+    data: {}
+    entity_id: switch.sonoff_1000b0edec
+  - delay: '1:00'
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.smart_plug_8
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.sonoff_1000b0edec
+  mode: single

@@ -78,26 +78,6 @@ google_assistant:
     switch.kitchen_ceiling:
       expose: false
 
-light:
-  - platform: switch
-    name: Couch Light
-    entity_id: switch.couch_ceiling
-  - platform: switch
-    name: Table Light
-    entity_id: switch.table_ceiling
-  - platform: switch
-    name: Sink Light
-    entity_id: switch.06003002cc50e37f5432_1
-  - platform: switch
-    name: Counter Light
-    entity_id: switch.06003002cc50e37f5432_2
-  - platform: switch
-    name: Kitchen Light
-    entity_id: switch.kitchen_ceiling
-  - platform: switch
-    name: Desk Light
-    entity_id: switch.bf0c3986535c3a94f4q0qr
-
 binary_sensor:
   - platform: workday
     country: GR
@@ -112,11 +92,15 @@ feedreader:
   urls:
     - http://showrss.info/user/17120.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
 
+shell_command:
+  git_update: "cd /config && git commit -am 'Daily commit `date`' --quiet &> /dev/null && git push --quiet"
+
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 sensor: !include sensor.yaml
+light: !include light.yaml
 
 frontend:
   themes: !include themes.yaml

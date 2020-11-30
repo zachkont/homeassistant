@@ -214,7 +214,7 @@
   description: ''
   trigger:
   - platform: time
-    at: '7:00'
+    at: '7:30'
   condition:
   - condition: state
     entity_id: binary_sensor.workday_sensor
@@ -226,7 +226,7 @@
   - service: switch.turn_on
     data: {}
     entity_id: switch.sonoff_1000b0edec
-  - delay: 01:10
+  - delay: 00:40
   - service: switch.turn_off
     data: {}
     entity_id: switch.sonoff_1000b0edec
@@ -312,4 +312,28 @@
   - service: switch.turn_off
     data: {}
     entity_id: switch.sonoff_1000b0edec
+  mode: single
+- id: '1606676748813'
+  alias: Transmission auto turtle
+  description: ''
+  trigger:
+  - platform: time
+    at: 03:00
+  condition: []
+  action:
+  - service: switch.turn_off
+    data: {}
+    entity_id: switch.transmission_turtle_mode
+  - service: notify.mobile_app_pixel_5
+    data:
+      title: Full speed!
+      message: '{{ now().strftime("%H:%M:%S") }}'
+  - delay: 04:00
+  - service: switch.turn_on
+    data: {}
+    entity_id: switch.transmission_turtle_mode
+  - service: notify.mobile_app_pixel_5
+    data:
+      title: Slow down!
+      message: '{{ now().strftime("%H:%M:%S") }}'
   mode: single
